@@ -1,0 +1,22 @@
+{% extends "menu/base.html" %}
+
+{% block title %}Delete Food Item{% endblock %}
+
+{% block content %}
+<div class="confirm-page">
+    <section class="confirm-panel">
+        <div class="warning-icon">!</div>
+        <p class="eyebrow">CONFIRM DELETION</p>
+        <h1>Delete food item?</h1>
+        <p>Are you sure you want to delete <strong>{{ food_item.name }}</strong> from the menu? This action cannot be undone.</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-actions centered-actions">
+                <a class="button button-outline" href="{% url 'food_item_list' %}">Cancel</a>
+                <button class="button button-danger" type="submit">Delete Food Item</button>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

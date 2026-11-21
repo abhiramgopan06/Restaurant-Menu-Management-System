@@ -1,0 +1,88 @@
+{% extends "menu/base.html" %}
+
+{% block title %}Restaurant Menu{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">MENU MANAGEMENT</p>
+        <h1>Restaurant Menu</h1>
+        <p class="subheading">Manage your food items, prices and availability.</p>
+    </div>
+    <a class="button button-primary" href="{% url 'add_food_item' %}">Add Food Item</a>
+</section>
+
+<form class="filter-bar" method="get">
+    <label for="category">Filter by category</label>
+    <select name="category" id="category">
+        <option value="">All Categories</option>
+        {% for category_value, category_label in categories %}
+            <option value="{{ category_value }}" {% if selected_category == category_value %}selected{% endif %}>
+                {{ category_label }}
+            </option>
+        {% endfor %}
+    </select>
+    <button class="button button-dark" type="submit">Search</button>
+    {% if selected_category %}
+        <a class="clear-filter" href="{% url 'food_item_list' %}">Clear filter</a>
+    {% endif %}
+</form>
+
+<div class="results-line">
+    <h2>{% if selected_category %}{{ selected_category }}{% else %}All Food Items{% endif %}</h2>
+    <span>{{ food_items|length }} item{{ food_items|length|pluralize }}</span>
+</div>
+
+{% if food_items %}
+    <section class="food-grid">
+        {% for food_item in food_items %}
+            <article class="food-card">
+                {% if food_item.image %}
+                    <img class="food-image" src="{{ food_item.image.url }}" alt="{{ food_item.name }}">
+                {% else %}
+                    <div class="food-image image-placeholder">
+                        <span>No image added</span>
+                    </div>
+                {% endif %}
+
+                <div class="food-card-content">
+                    <div class="food-title-row">
+                        <h3>{{ food_item.name }}</h3>
+                        <span class="price">₹{{ food_item.price }}</span>
+                    </div>
+                    <span class="category-tag">{{ food_item.category }}</span>
+                    <p class="food-description">{{ food_item.description }}</p>
+
+                    <div class="status-row">
+                        {% if food_item.availability %}
+                            <span class="status available">Available</span>
+                        {% else %}
+                            <span class="status unavailable">Unavailable</span>
+                        {% endif %}
+                        <form method="post" action="{% url 'toggle_food_availability' food_item.id %}">
+                            {% csrf_token %}
+                            <button class="text-button" type="submit">
+                                {% if food_item.availability %}Mark Unavailable{% else %}Mark Available{% endif %}
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="card-actions">
+                        <a class="button button-outline" href="{% url 'edit_food_item' food_item.id %}">Edit</a>
+                        <a class="button button-danger-light" href="{% url 'delete_food_item' food_item.id %}">Delete</a>
+                    </div>
+                </div>
+            </article>
+        {% endfor %}
+    </section>
+{% else %}
+    <section class="empty-state">
+        <div class="empty-icon">☰</div>
+        <h3>No food items found</h3>
+        <p>{% if selected_category %}There are no items in this category yet.{% else %}Add your first food item to start building the menu.{% endif %}</p>
+        {% if not selected_category %}
+            <a class="button button-primary" href="{% url 'add_food_item' %}">Add Food Item</a>
+        {% endif %}
+    </section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Restaurant Menu{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'menu/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-content">
+            <a class="brand" href="{% url 'food_item_list' %}">Restaurant Menu</a>
+            <a class="header-link" href="{% url 'add_food_item' %}">+ Add Food Item</a>
+        </div>
+    </header>
+
+    <main class="page-container">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">Restaurant Menu Management System</footer>
+</body>
+</html>

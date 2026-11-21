@@ -1,0 +1,50 @@
+{% extends "menu/base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <a class="back-link" href="{% url 'food_item_list' %}">← Back to menu</a>
+    <section class="form-panel">
+        <p class="eyebrow">MENU DETAILS</p>
+        <h1>{{ page_title }}</h1>
+        <p class="subheading">Enter the details below and save your changes.</p>
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-field {% if field.name == 'availability' %}availability-field{% endif %}">
+                    {% if field.name == 'availability' %}
+                        <div class="checkbox-line">
+                            {{ field }}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                    {% else %}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                    {% endif %}
+
+                    {% if field.help_text %}
+                        <small class="help-text">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            {% if form.non_field_errors %}
+                <div class="field-error">
+                    {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <button class="button button-primary" type="submit">{{ button_text }}</button>
+                <a class="button button-outline" href="{% url 'food_item_list' %}">Cancel</a>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}
